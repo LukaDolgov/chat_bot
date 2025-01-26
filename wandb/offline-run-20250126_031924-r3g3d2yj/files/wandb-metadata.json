@@ -1,0 +1,26 @@
+{
+  "os": "Windows-10-10.0.26100-SP0",
+  "python": "CPython 3.11.9",
+  "startedAt": "2025-01-26T08:19:25.384404Z",
+  "program": "c:\\Users\\lukad\\OneDrive\\Desktop\\VSCodeLap\\Python\\chat_bot\\TrainLuka.py",
+  "codePath": "TrainLuka.py",
+  "root": "C:\\Users\\lukad\\OneDrive\\Desktop\\VSCodeLap\\Python\\chat_bot",
+  "host": "Luka-Laptop",
+  "executable": "C:\\Users\\lukad\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\python.exe",
+  "codePathLocal": "TrainLuka.py",
+  "cpu_count": 16,
+  "cpu_count_logical": 22,
+  "disk": {
+    "/": {
+      "total": "1999264280576",
+      "used": "226921996288"
+    }
+  },
+  "memory": {
+    "total": "16492081152"
+  },
+  "cpu": {
+    "count": 16,
+    "countLogical": 22
+  }
+}

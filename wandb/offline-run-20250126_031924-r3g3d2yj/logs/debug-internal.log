@@ -1,0 +1,14 @@
+{"time":"2025-01-26T03:19:25.4731397-05:00","level":"INFO","msg":"stream: starting","core version":"0.19.4","symlink path":"C:\\Users\\lukad\\OneDrive\\Desktop\\VSCodeLap\\Python\\chat_bot\\wandb\\offline-run-20250126_031924-r3g3d2yj\\logs\\debug-core.log"}
+{"time":"2025-01-26T03:19:26.0622044-05:00","level":"INFO","msg":"created new stream","id":"r3g3d2yj"}
+{"time":"2025-01-26T03:19:26.0622044-05:00","level":"INFO","msg":"stream: started","id":"r3g3d2yj"}
+{"time":"2025-01-26T03:19:26.0632044-05:00","level":"INFO","msg":"handler: started","stream_id":"r3g3d2yj"}
+{"time":"2025-01-26T03:19:26.0632044-05:00","level":"INFO","msg":"writer: Do: started","stream_id":"r3g3d2yj"}
+{"time":"2025-01-26T03:19:26.0662047-05:00","level":"INFO","msg":"sender: started","stream_id":"r3g3d2yj"}
+{"time":"2025-01-26T03:19:26.0773451-05:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-01-26T03:19:26.4286007-05:00","level":"INFO","msg":"stream: closing","id":"r3g3d2yj"}
+{"time":"2025-01-26T03:19:26.4286007-05:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2025-01-26T03:19:26.429114-05:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2025-01-26T03:19:26.4301774-05:00","level":"INFO","msg":"handler: closed","stream_id":"r3g3d2yj"}
+{"time":"2025-01-26T03:19:26.4301774-05:00","level":"INFO","msg":"writer: Close: closed","stream_id":"r3g3d2yj"}
+{"time":"2025-01-26T03:19:26.4301774-05:00","level":"INFO","msg":"sender: closed","stream_id":"r3g3d2yj"}
+{"time":"2025-01-26T03:19:26.4311463-05:00","level":"INFO","msg":"stream: closed","id":"r3g3d2yj"}
