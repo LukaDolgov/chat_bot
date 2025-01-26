@@ -33,14 +33,14 @@ class TransformerDataset(Dataset):
     
 
 def load_dataset():
-
-    if os.path.exists(f"datasets/{dataset_name}.npy"):
-        text_indexes = torch.tensor(np.load(f"datasets/{dataset_name}.npy"))
+    encoded_file = f"encoded_{dataset_name}.pt"  # Save tensors in .pt format (PyTorch's format)
+    if os.path.exists(encoded_file):
+        text_indexes = torch.load(encoded_file)
     else:
-        with open (dataset_name, "r") as file:
+        with open(dataset_name, "r") as file:
             text = file.read()
         with open("tokenizer.pkl", 'rb') as tokener:
-            tokenizer = pickle.load(tokener)  # Load the object from the pickle file
+            tokenizer = pickle.load(tokener)
         text_indexes = torch.tensor(tokenizer.encode(text))
-
+        torch.save(text_indexes, encoded_file)
     return TransformerDataset(text_indexes)

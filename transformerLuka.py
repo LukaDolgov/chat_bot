@@ -3,7 +3,7 @@ import torch
 import math
 from torch import nn
 import torch.nn.functional as F
-
+import random
 from settings import *
 from tokenizerLuka import Tokenizer
 
@@ -14,17 +14,13 @@ def get_device():
 
 def scaled_dot_product(q, k, v, mask):
     d_k = q.size()[-1]
-    print("q size: " + f"{q.size()}")
-    print("k size: " + f"{k.transpose(-1, -2).size()}")
     scaled = torch.matmul(q, k.transpose(-1, -2)) / math.sqrt(d_k)
     if mask is not None:
         mask = mask.unsqueeze(0).unsqueeze(0)
         mask = mask.expand(scaled.size(0), scaled.size(1), -1, -1)
-        print("mask:" + f"{mask.size()}")  
         scaled = scaled + mask
     attention = F.softmax(scaled, dim=-1)
     values = torch.matmul(attention, v)
-    print("final values size" + f"{values.size()}")
     return values, attention
 
 class PositionalEncoding(nn.Module):
@@ -148,7 +144,6 @@ class SequentialEncoder(nn.Module):
         for module in self.model:
             x = module(x)
             # Pass the input through each layer sequentially
-            print("layer output" + f"{x.size()}")
         return x
 
 class TransformerLayer(nn.Module):
@@ -188,4 +183,45 @@ class Transformer(nn.Module):
     def forward(self, inpx):
         x = self.transformerlayer(inpx) #shape (batch_size, seq_length, embedding)
         out = self.linear(x) #shape (batch, seq_length, vocab_size)
+        print("final output vector size: " + f"{out.size()}")
         return out
+    
+    def generate(self, start_text, num_new, temperature):
+        self.eval()
+        text_tokens = start_text
+        for i in range(num_new):
+            input_tokens = text_tokens
+            input_tokens = pad_sequence(input_tokens, max_seq_size, 0)
+            input_tokens_tensor = torch.tensor(input_tokens[-max_seq_size:]).reshape(1, -1)
+            input_tokens_tensor = input_tokens_tensor.repeat(16, 1)
+            print(input_tokens_tensor.size())  # Debugging the size
+
+            with torch.no_grad():
+                logits = self.forward(input_tokens_tensor)  # Forward pass
+            
+            # Extract the logits for the last token in the sequence
+            output_logits = logits[:, -1, :]  # Shape: [batch_size, vocab_size]
+            # Apply temperature scaling if needed
+            
+            # Apply softmax to get probabilities
+            output_probs = torch.softmax(output_logits, dim=-1)
+            output_probs = output_probs[0]
+            max_prob_index = torch.argmax(output_probs).item()
+            print(max_prob_index)
+
+            # Append the new token to the sequence
+            text_tokens.append(max_prob_index)
+            print(text_tokens)
+
+        return text_tokens
+
+
+def pad_sequence(tokens, max_seq_size, pad_token=0):
+    if len(tokens) < max_seq_size:
+        padding_needed = max_seq_size - len(tokens)
+        tokens = tokens + [pad_token] * padding_needed
+    tokens = tokens[-max_seq_size:]
+    return tokens
+
+#need to add masking to prevent padding from affecting softmax, consider removing it from output list before caluclation,
+#figure out which index is assigned to pad, or dedicate one

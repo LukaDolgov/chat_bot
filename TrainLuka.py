@@ -23,12 +23,12 @@ transformer = Transformer(
                 max_seq_size, 
                 vocab_size,)
 
-criterion = nn.CrossEntropyLoss(reduction='none')
+criterion = nn.CrossEntropyLoss()
 optim = torch.optim.Adam(transformer.parameters(), lr=learning_rate)
 
 trainer = Trainer(
     transformer,
-    DataLoader(dataset, batch_size, shuffle=True),
+    DataLoader(dataset, batch_size, shuffle=True, drop_last=True),
     criterion,
     optim
 )

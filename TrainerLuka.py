@@ -34,6 +34,8 @@ class Trainer:
         self.epoch_index = None
         self.epoch_loss = None 
         self.attention_mask = None
+        self.logits = None
+        self.y_check = None
 
         self.batch_losses = []
         self.epoch_losses = []
@@ -51,10 +53,18 @@ class Trainer:
             self.batch_losses = []
             for self.batch_idx, (self.batch_xs, self.batch_ys) in enumerate(self.dataloader):
                 self.batch_xs = self.batch_xs.to(device)
+               # print("batch size: " + f"{self.batch_xs.size()}")
                 self.batch_ys = self.batch_ys.to(device)
                 self.optimizer.zero_grad()
+                print(self.batch_xs.size())
                 self.batch_outputs = self.model(self.batch_xs)
-                loss = self.criterion(self.batch_outputs, self.batch_ys)
+                
+                self.logits = self.batch_outputs.reshape(-1, vocab_size)  # Flatten to (batch_size * seq_length, vocab_size)
+                self.y_check = self.batch_ys.reshape(-1)  # Flatten to (batch_size * seq_length,)
+               # print("logits size: " + f"{self.logits.size()}")
+                #print("y_check size: " + f"{self.y_check.size()}")
+                
+                loss = self.criterion(self.logits, self.y_check)
                 loss.backward()
                 self.optimizer.step()
                 
@@ -73,6 +83,8 @@ class Trainer:
                     print(f"Iteration {self.batch_idx}: Loss = {self.batch_loss}")
                     print(f"Input: {self.batch_xs[0]}")
                     print(f"Real next token: {self.batch_ys[0]}")
+        print("finished training!")
+        torch.save(self.model.state_dict(), 'model_weights.pth')
 
 
             
