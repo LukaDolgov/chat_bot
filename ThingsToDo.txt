@@ -1,0 +1,4 @@
+1. consider strategy of feeding "hidden tokens" before input in order to input any length.
+2. Figure out a good vocabulary size : length of text measured ratio
+3. mess around with hyperparameters
+4. figure out temperature and prevent overfitting of model to certain words (topk sampling)

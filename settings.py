@@ -9,21 +9,22 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-dataset_name = "tinyshakespeare.txt"
+dataset_name = "shakespeare.txt"
 
-vocab_size = 300 #amount of tokens in vocabulary
+vocab_size = 1000 #amount of tokens in vocabulary
 
-max_seq_size = 10 #sequence length
+max_seq_size = 70 #sequence length
 embedding_size = 512 #embedding (per vector size)
-ffn_hidden = 2000 #amount of hidden layers in feed-forward
+ffn_hidden = 512 #amount of hidden layers in feed-forward
 num_heads = 8 #amount of attention heads
 num_layers = 3 #amount of repetitions through heads
 layer_size = 1
-drop_prob = 0.1
+drop_prob = 0.25
 
 batch_size = 16 #amount of samples (of tokens) per batch
 learning_rate = 3e-5 #learning rate
 epochs = 5 #epochs (repetitions through whole dataset)
 
-amount_to_generate = 50
-temperature = .9
+amount_to_generate = 200
+temperature = .6
+top_k = 10

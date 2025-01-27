@@ -10,18 +10,18 @@ class Tokenizer():
     
     def __init__(self):
         self.vocab_size = vocab_size  # Maximum size of the vocabulary
-        self.btoi = {i: i for i in range(256)}  # Initialize byte-to-index mapping for characters
         self.itob = {i: bytes([i]) for i in range(256)}  # Reverse mapping (index to byte)
+        self.btoi = {value: key for key, value in self.itob.items()}
     
     def train(self, text_to_train):
+        #print(self.btoi)
+        #print(self.itob)
         text_bytes = bytes(text_to_train, 'utf-8')
-        text_indexes = [self.btoi[i] for i in text_bytes]
-       # print(self.btoi)
-     #   print(self.itob)
+        text_indexes = [self.btoi[bytes([i])] for i in text_bytes]
         while len(self.btoi) < self.vocab_size: #repeat until vocab size met
             with tqdm(total=self.vocab_size - len(self.btoi)) as pbar:
-                print(len(self.btoi))
-                print(len(self.itob))
+                # print(len(self.btoi))
+               # print(len(self.itob))
                 pair_counts = Counter(zip(text_indexes[:-1], text_indexes[1:])) #find pairs
                 common_pair = pair_counts.most_common(1)[0][0]
                 print(common_pair)
@@ -44,32 +44,47 @@ class Tokenizer():
                         updated_text_indexes.append(text_indexes[i])
                 text_indexes = updated_text_indexes
                 pbar.update(1)  # Update the progress bar after each iteration
+        print(self.btoi)
         print(self.itob)
-        print(len(self.btoi) == len(self.itob))
-        if b"F" in self.itob.values():
-            print("b'F' is in itob")
+        if b"S" in self.btoi:
+            print("b'S' is in btoi")
         else:
-            print("b'a' is not in itob")
-    def encode(self, text, dropout=.1):
+            print("b'S' is not in btoi")
+    def encode(self, text):
         text_bytes = bytes(text, 'utf-8')  # Convert the input text into bytes
-        text_indexes = []
-        i = 0
-        
-        with tqdm(total=len(text_bytes)) as pbar:
+        text_indexes = []  # List to store the encoded indices
+        i = 0  # Pointer to track the current position in the byte sequence
+        longest_token_length = max(len(token) for token in self.btoi.keys())
+        with tqdm(total=len(text_bytes), desc="Encoding") as pbar:
             while i < len(text_bytes):
                 matched = False
-                for length in range(len(text_bytes) - i, 0, -1): 
+                max_check_length = min(longest_token_length, len(text_bytes) - i)
+                for length in range(max_check_length - i, 0, -1):  # Adjust max token length as needed
                     token = text_bytes[i:i+length]
-                    if token in self.btoi:
-                        if random.random() > dropout:
-                            text_indexes.append(self.btoi[token]) 
-                        i += length 
+                    if token in self.btoi:  # Use btoi for token lookup
+                        text_indexes.append(self.btoi[token])  # Append the corresponding index
+                        i += length  # Move the pointer forward
                         matched = True
-                        break
+                        pbar.update(length)  # Update the progress bar
+                        break  # Exit the inner loop once a match is found
+                
                 if not matched:
-                    i += 1  
-                pbar.update(1)  
-            return text_indexes
+                    # Handle unknown tokens
+                    if b'<UNK>' in self.btoi:
+                        # If <UNK> token exists in the vocabulary, use it
+                        text_indexes.append(self.btoi[b'<UNK>'])
+                    else:
+                        # Fall back to encoding individual bytes
+                        single_byte = text_bytes[i:i+1]
+                        if single_byte in self.btoi:
+                            text_indexes.append(self.btoi[single_byte])
+                        else:
+                            # If even the single byte is not in the vocabulary, raise an error
+                            raise ValueError(f"Byte not found in vocabulary: {single_byte}")
+                    i += 1  # Move the pointer forward by 1 byte
+                    pbar.update(1)  # Update the progress bar
+        
+        return text_indexes
 
     def decode(self, text_indexes):
         text_bytes = b''.join([self.itob[index] for index in text_indexes])  
