@@ -9,8 +9,12 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
+#datasets
 dataset_name = "shakespeare.txt"
+saved_input = "encodedinput.txt"
 
+
+#hyperparameters
 vocab_size = 1000 #amount of tokens in vocabulary
 
 max_seq_size = 70 #sequence length
@@ -25,6 +29,7 @@ batch_size = 16 #amount of samples (of tokens) per batch
 learning_rate = 3e-5 #learning rate
 epochs = 5 #epochs (repetitions through whole dataset)
 
+#generation
 amount_to_generate = 200
-temperature = .6
+temperature = 1
 top_k = 10

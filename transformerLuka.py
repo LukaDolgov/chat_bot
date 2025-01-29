@@ -187,7 +187,7 @@ class Transformer(nn.Module):
         print("final output vector size: " + f"{out.size()}")
         return out
     
-    def generate(self, start_text, num_new, temperature, top_k):
+    def generate(self, start_text, num_new, temperature, top_k): #Strategy 1
         self.eval()
         text_tokens = start_text
         for i in range(num_new):
@@ -215,6 +215,36 @@ class Transformer(nn.Module):
                 random_index = random.randint(0, top_k_indices.size()[0] - 1)
                 index_submit = top_k_indices[random_index].item()  # Get the actual token index.
             # Append the new token to the sequence
+            text_tokens.append(index_submit)
+            print(text_tokens)
+
+        return text_tokens
+
+    def generate2(self, start_text, num_new, temperature, top_k): # strategy 2
+        self.eval()
+        text_tokens = start_text
+        for i in range(num_new):
+            input_tokens = text_tokens
+            input_tokens_tensor = torch.tensor(input_tokens[-max_seq_size:]).reshape(1, -1)
+            input_tokens_tensor = input_tokens_tensor.repeat(16, 1)
+
+            with torch.no_grad():
+                logits = self.forward(input_tokens_tensor)  # Forward pass
+            
+            output_logits = logits[:, -1, :]  
+
+            if temperature > 0:
+                output_logits = output_logits / temperature
+
+            output_probs = torch.softmax(output_logits, dim=-1)
+            output_probs = output_probs[0] 
+
+            # Apply top-k filtering
+            top_k_probs = torch.topk(output_probs, top_k)
+            top_k_values, top_k_indices = top_k_probs.values, top_k_probs.indices
+
+            token_idx = torch.multinomial(top_k_values, 1).item()
+            index_submit = top_k_indices[token_idx].item()  
             text_tokens.append(index_submit)
             print(text_tokens)
 
